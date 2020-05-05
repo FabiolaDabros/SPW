@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.MenuButton?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.layout.Pane?>
+
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Controller">
+    <MenuButton mnemonicParsing="false" prefHeight="25.0" prefWidth="64.0" text="File">
+        <items>
+            <MenuItem fx:id="openBtnId" mnemonicParsing="false" onAction="#onOpenFile" text="Open" />
+            <MenuItem fx:id="saveBtnId" mnemonicParsing="false" onAction="#onSaveFile" text="Save" />
+        </items>
+    </MenuButton>
+</Pane>
