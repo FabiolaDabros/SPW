@@ -6,18 +6,19 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Label;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextArea;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.TextFieldTableCell;
+import javafx.scene.input.MouseEvent;
 import javafx.stage.FileChooser;
 import com.gembox.spreadsheet.*;
+import org.shaded.etsi.uri.x01903.v13.SignatureProductionPlaceDocument;
 
+import java.awt.event.ItemEvent;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.Scanner;
@@ -26,8 +27,14 @@ public class Controller implements Initializable {
 
     public TextArea fileTextid;
     public Label labelTitleId;
-    @FXML
-    public TableView table;
+    @FXML public TableView table;
+    public ComboBox xCombo;
+    public ComboBox yCombo;
+    public Label xLabelId;
+    public Label yLabelId;
+
+    List<String> xColumnData;
+    List<String> yColumnData;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -35,6 +42,10 @@ public class Controller implements Initializable {
         labelTitleId.setVisible(false);
         fileTextid.setEditable(false);
         table.setVisible(false);
+        xCombo.setVisible(false);
+        yCombo.setVisible(false);
+        xLabelId.setVisible(false);
+        yLabelId.setVisible(false);
     }
 
     public void onOpenFile(ActionEvent event) throws IOException {
@@ -144,6 +155,95 @@ public class Controller implements Initializable {
                         t.getTableView().getItems().get(t.getTablePosition().getRow()).set(t.getTablePosition().getColumn(), t.getNewValue());
                     });
             table.getColumns().add(column);
+        }
+
+        countNumberOfColumns();
+        table.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
+        table.getSelectionModel().setCellSelectionEnabled(true);
+    }
+
+    public void clickedColumn(MouseEvent mouseEvent) {
+        TablePosition tablePosition = (TablePosition) table.getSelectionModel().getSelectedCells().get(0);
+        int column = tablePosition.getColumn();
+        TableColumn tableColumn = tablePosition.getTableColumn();
+        System.out.println("Selected column" + column);
+      }
+
+    private void countNumberOfColumns() {
+        ObservableList<TableColumn> columns = table.getColumns();
+
+        int numberOfColumns = 0;
+        for (Object row1 : table.getItems()) {
+            for (TableColumn column1 : columns) {
+                String col = (String) column1.getCellObservableValue(row1).getValue();
+                if (col != null) {
+                    numberOfColumns++;
+                } else {
+                    break;
+                }
+            }
+            break;
+        }
+        System.out.println("numberOfColumns" + numberOfColumns);
+
+        xCombo.setVisible(true);
+        yCombo.setVisible(true);
+        xLabelId.setVisible(true);
+        yLabelId.setVisible(true);
+
+
+        for(int i=0; i<numberOfColumns; i++){
+            xCombo.getItems().add(Column.values()[i]);
+            yCombo.getItems().add(Column.values()[i]);
+        }
+    }
+
+    public void xSelectedAction(ActionEvent actionEvent) {
+        int xColumnNumber = 0;
+        Column xColumnString = (Column) xCombo.getValue();
+
+        for(Column col : Column.values()) {
+            if(xColumnString == col){
+                xColumnNumber = col.getValue();
+            }
+        }
+
+        TableColumn tableColumn = (TableColumn) table.getColumns().get(xColumnNumber);
+        xColumnData = new ArrayList<>();
+
+        // ignoruje pierwszy wiersz na sztywno bo zakładam że tam zawsze jest nazwa kolumny XD
+        for (int i = 1; i < table.getItems().size(); i++) {
+            xColumnData.add((String) tableColumn.getCellObservableValue(table.getItems().get(i)).getValue());
+        }
+
+        System.out.println("xColumnData" + xColumnData.size());
+        for(String x: xColumnData){
+            System.out.println(x);
+        }
+
+    }
+
+    public void ySelectedAction(ActionEvent actionEvent) {
+        int yColumnNumber = 0;
+        Column yColumnString = (Column) yCombo.getValue();
+
+        for(Column col : Column.values()) {
+            if(yColumnString == col){
+                yColumnNumber = col.getValue();
+            }
+        }
+
+        TableColumn tableColumn = (TableColumn) table.getColumns().get(yColumnNumber);
+        yColumnData = new ArrayList<>();
+
+        // ignoruje pierwszy wiersz na sztywno bo zakładam że tam zawsze jest nazwa kolumny XD
+        for (int i = 1; i < table.getItems().size(); i++) {
+            yColumnData.add((String) tableColumn.getCellObservableValue(table.getItems().get(i)).getValue());
+        }
+
+        System.out.println("yColumnData" + yColumnData.size());
+        for(String y: yColumnData){
+            System.out.println(y);
         }
     }
 

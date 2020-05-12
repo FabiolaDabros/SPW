@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.MenuButton?>
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextArea?>
-<?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.Pane?>
 
 <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="657.0" prefWidth="1009.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Controller">
@@ -16,12 +15,12 @@
             <MenuItem fx:id="saveBtnId" mnemonicParsing="false" onAction="#onSaveFile" text="Save as.." />
         </items>
     </MenuButton>
-   <TextArea fx:id="fileTextid" layoutX="14.0" layoutY="51.0" prefHeight="599.0" prefWidth="259.0" />
-   <Label fx:id="labelTitleId" layoutX="74.0" layoutY="6.0" prefHeight="17.0" prefWidth="112.0" />
-    <TableView fx:id="table" editable="true" layoutX="14.0" layoutY="51.0" prefHeight="599.0" prefWidth="500.0">
+   <TextArea fx:id="fileTextid" layoutX="14.0" layoutY="96.0" prefHeight="554.0" prefWidth="259.0" />
+   <Label fx:id="labelTitleId" layoutX="74.0" layoutY="6.0" prefHeight="17.0" prefWidth="182.0" />
+    <TableView fx:id="table" editable="true" layoutX="14.0" layoutY="96.0" onMouseClicked="#clickedColumn" prefHeight="554.0" prefWidth="500.0">
     </TableView>
-    <!--<Button layoutX="84.0" layoutY="1.0" mnemonicParsing="false" onAction="#load" text="Load ..." />-->
-    <!--<Button layoutX="166.0" layoutY="1.0" mnemonicParsing="false" onAction="#save" text="Save as ..." />-->
-   <TextField layoutX="286.0" layoutY="1.0" />
-   <TextField layoutX="505.0" layoutY="1.0" />
+   <Label layoutX="32.0" layoutY="60.0" text="x:" fx:id="xLabelId" />
+   <Label fx:id="yLabelId" layoutX="161.0" layoutY="60.0" text="y:" />
+   <ComboBox layoutX="55.0" layoutY="56.0" onAction="#xSelectedAction" prefHeight="25.0" prefWidth="64.0" fx:id="xCombo" />
+   <ComboBox fx:id="yCombo" layoutX="182.0" layoutY="56.0" onAction="#ySelectedAction" prefHeight="25.0" prefWidth="64.0" />
 </Pane>
