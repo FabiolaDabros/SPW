@@ -13,6 +13,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.stage.FileChooser;
 import com.gembox.spreadsheet.*;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -25,28 +26,46 @@ public class Controller implements Initializable {
 
     public TextArea fileTextid;
     public Label labelTitleId;
+    @FXML
+    public TableView table;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         fileTextid.setVisible(false);
         labelTitleId.setVisible(false);
         fileTextid.setEditable(false);
+        table.setVisible(false);
     }
 
     public void onOpenFile(ActionEvent event) throws IOException {
         FileChooser fileChooser = new FileChooser();
-//        fileChooser.getExtensionFilters().addAll(
-//                new FileChooser.ExtensionFilter("Files","*.pdf")
-//        );
+        fileChooser.getExtensionFilters().addAll(
+                new FileChooser.ExtensionFilter("XLSX files (*.xlsx)", "*.xlsx"),
+                new FileChooser.ExtensionFilter("XLS files (*.xls)", "*.xls"),
+                new FileChooser.ExtensionFilter("Txt Files", "*.txt")
+        );
 
-        File file = fileChooser.showOpenDialog(null);
+        File file = fileChooser.showOpenDialog(table.getScene().getWindow());
 
+        if (file.getPath().contains("txt")) {
+            loadTxtFile(file);
+        } else {
+            loadExcelFile(file);
+        }
+    }
+
+    private void loadTxtFile(File file) {
         try {
-            Scanner s = new Scanner(file).useDelimiter(" !"); // wczytuje z notatnika TODO excel
-            labelTitleId.setText("File: "+file.getName());
-            labelTitleId.setVisible(true);
-            fileTextid.clear();
-            fileTextid.setVisible(true);
+            Scanner s = new Scanner(file).useDelimiter(" !");
+            if (s.hasNext()) {
+                labelTitleId.setText("File: " + file.getName());
+                labelTitleId.setVisible(true);
+                fileTextid.clear();
+                fileTextid.setVisible(true);
+                table.setVisible(false);
+            } else {
+                labelTitleId.setText("File: " + file.getName() + "could not be loaded properly");
+            }
             while (s.hasNext()) {
                 fileTextid.appendText(s.next() + " ");
             }
@@ -55,21 +74,7 @@ public class Controller implements Initializable {
         }
     }
 
-    public void onSaveFile(ActionEvent actionEvent) {
-    }
-
-
-    static {
-        SpreadsheetInfo.setLicense("FREE-LIMITED-KEY");
-    }
-
-    @FXML public TableView table;
-
-    public void load(ActionEvent event) throws IOException {
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Open file");
-        File file = fileChooser.showOpenDialog(table.getScene().getWindow());
-
+    private void loadExcelFile(File file) throws IOException {
         ExcelFile workbook = ExcelFile.load(file.getAbsolutePath());
         ExcelWorksheet worksheet = workbook.getWorksheet(0);
         String[][] sourceData = new String[100][26];
@@ -81,31 +86,11 @@ public class Controller implements Initializable {
             }
         }
         fillTable(sourceData);
+        labelTitleId.setText("File: " + file.getName());
+        labelTitleId.setVisible(true);
     }
 
-    private void fillTable(String[][] dataSource) {
-        table.getColumns().clear();
-
-        ObservableList<ObservableList<String>> data = FXCollections.observableArrayList();
-        for (String[] row : dataSource)
-            data.add(FXCollections.observableArrayList(row));
-        table.setItems(data);
-
-        for (int i = 0; i < dataSource[0].length; i++) {
-            final int currentColumn = i;
-            TableColumn<ObservableList<String>, String> column = new TableColumn<>(ExcelColumnCollection.columnIndexToName(currentColumn));
-            column.setCellValueFactory(param -> new ReadOnlyObjectWrapper<>(param.getValue().get(currentColumn)));
-            column.setEditable(true);
-            column.setCellFactory(TextFieldTableCell.forTableColumn());
-            column.setOnEditCommit(
-                    (TableColumn.CellEditEvent<ObservableList<String>, String> t) -> {
-                        t.getTableView().getItems().get(t.getTablePosition().getRow()).set(t.getTablePosition().getColumn(), t.getNewValue());
-                    });
-            table.getColumns().add(column);
-        }
-    }
-
-    public void save(ActionEvent event) throws IOException {
+    public void onSaveFile(ActionEvent actionEvent) throws IOException {
         ExcelFile file = new ExcelFile();
         ExcelWorksheet worksheet = file.addWorksheet("sheet");
         for (int row = 0; row < table.getItems().size(); row++) {
@@ -128,5 +113,39 @@ public class Controller implements Initializable {
 
         file.save(saveFile.getAbsolutePath());
     }
+
+
+    static {
+        SpreadsheetInfo.setLicense("FREE-LIMITED-KEY");
+        SpreadsheetInfo.addFreeLimitReachedListener(args -> {
+            System.out.println("LIMIT EXCEEDED");
+            args.setFreeLimitReachedAction(FreeLimitReachedAction.CONTINUE_AS_TRIAL);
+        });
+    }
+
+    private void fillTable(String[][] dataSource) {
+        table.getColumns().clear();
+        fileTextid.setVisible(false);
+        table.setVisible(true);
+
+        ObservableList<ObservableList<String>> data = FXCollections.observableArrayList();
+        for (String[] row : dataSource)
+            data.add(FXCollections.observableArrayList(row));
+        table.setItems(data);
+
+        for (int i = 0; i < dataSource[0].length; i++) {
+            final int currentColumn = i;
+            TableColumn<ObservableList<String>, String> column = new TableColumn<>(ExcelColumnCollection.columnIndexToName(currentColumn));
+            column.setCellValueFactory(param -> new ReadOnlyObjectWrapper<>(param.getValue().get(currentColumn)));
+            column.setEditable(true);
+            column.setCellFactory(TextFieldTableCell.forTableColumn());
+            column.setOnEditCommit(
+                    (TableColumn.CellEditEvent<ObservableList<String>, String> t) -> {
+                        t.getTableView().getItems().get(t.getTablePosition().getRow()).set(t.getTablePosition().getColumn(), t.getNewValue());
+                    });
+            table.getColumns().add(column);
+        }
+    }
+
 }
 

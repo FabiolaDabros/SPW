@@ -14,7 +14,7 @@ public class Main extends Application {
         primaryStage.setTitle("Smoothing module");
         Scene scene = new Scene(root, 1060, 670);
         primaryStage.setScene(scene);
-        scene.getStylesheets().add("mainWindow.css");
+        scene.getStylesheets().add("sample/mainWindow.css");
         primaryStage.show();
     }
 
