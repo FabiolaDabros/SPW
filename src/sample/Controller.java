@@ -6,6 +6,9 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.chart.LineChart;
+import javafx.scene.chart.NumberAxis;
+import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.input.MouseEvent;
@@ -32,9 +35,14 @@ public class Controller implements Initializable {
     public ComboBox yCombo;
     public Label xLabelId;
     public Label yLabelId;
+    public LineChart lineChart;
+    public Button submitButtonId;
+    public NumberAxis y;
+    public NumberAxis x;
 
     List<String> xColumnData;
     List<String> yColumnData;
+    List<Point> listOfPoints;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -46,6 +54,9 @@ public class Controller implements Initializable {
         yCombo.setVisible(false);
         xLabelId.setVisible(false);
         yLabelId.setVisible(false);
+        lineChart.setCreateSymbols(false);
+        y.setLabel("Y");
+        x.setLabel("X");
     }
 
     public void onOpenFile(ActionEvent event) throws IOException {
@@ -247,5 +258,37 @@ public class Controller implements Initializable {
         }
     }
 
+    private void drawChart(List<Point> points) {
+        XYChart.Series series = new XYChart.Series();
+
+        for (Point point: points ) {
+
+            series.getData().add(new XYChart.Data<>(point.getX(),point.getY()));
+        }
+
+        lineChart.getData().addAll(series);
+
+    }
+
+    private void generateOneListOfPointsFromTwoLists(){
+
+        listOfPoints =  new ArrayList<>();
+        if(xColumnData.size() > 0 && yColumnData.size() > 0)
+        for(int i= 0; i< xColumnData.size(); i++){
+            if(xColumnData.get(i) != null && yColumnData.get(i)!= null ){
+
+                Point point =  new Point(Double.parseDouble(xColumnData.get(i)), Double.parseDouble(yColumnData.get(i)));
+                listOfPoints.add(point);
+            }
+
+        }
+
+    }
+
+    public void sumbit(ActionEvent actionEvent) {
+
+        generateOneListOfPointsFromTwoLists();
+        drawChart(listOfPoints);
+    }
 }
 

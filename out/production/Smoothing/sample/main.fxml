@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.chart.CategoryAxis?>
+<?import javafx.scene.chart.LineChart?>
+<?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.MenuButton?>
@@ -8,7 +12,7 @@
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.layout.Pane?>
 
-<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="657.0" prefWidth="1009.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Controller">
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="657.0" prefWidth="1420.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Controller">
     <MenuButton mnemonicParsing="false" prefHeight="25.0" prefWidth="64.0" text="File">
         <items>
             <MenuItem fx:id="openBtnId" mnemonicParsing="false" onAction="#onOpenFile" text="Load.." />
@@ -23,4 +27,13 @@
    <Label fx:id="yLabelId" layoutX="161.0" layoutY="60.0" text="y:" />
    <ComboBox layoutX="55.0" layoutY="56.0" onAction="#xSelectedAction" prefHeight="25.0" prefWidth="64.0" fx:id="xCombo" />
    <ComboBox fx:id="yCombo" layoutX="182.0" layoutY="56.0" onAction="#ySelectedAction" prefHeight="25.0" prefWidth="64.0" />
+   <LineChart fx:id="lineChart" layoutX="531.0" layoutY="96.0" prefHeight="554.0" prefWidth="607.0" title="Chart">
+       <xAxis>
+           <NumberAxis label="x" side="BOTTOM" fx:id="x" />
+       </xAxis>
+       <yAxis>
+           <NumberAxis fx:id="y" prefHeight="579.0" prefWidth="49.0" side="LEFT" />
+       </yAxis>
+   </LineChart>
+   <Button fx:id="submitButtonId" layoutX="298.0" layoutY="56.0" mnemonicParsing="false" onAction="#sumbit" text="Submit" />
 </Pane>
