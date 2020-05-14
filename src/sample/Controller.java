@@ -39,10 +39,15 @@ public class Controller implements Initializable {
     public Button submitButtonId;
     public NumberAxis y;
     public NumberAxis x;
+    public ComboBox alghoritmsId;
 
     List<String> xColumnData;
     List<String> yColumnData;
     List<Point> listOfPoints;
+    List<Point> smothedPoints;
+    String algName1 = "ALG1";  // tutaj do zmiany nazwy algorytmów jak juz bedziemy wiedziały dokladnie jakie
+    String algName2 = "ALG2";
+    String algName3 = "ALG2";
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -57,6 +62,9 @@ public class Controller implements Initializable {
         lineChart.setCreateSymbols(false);
         y.setLabel("Y");
         x.setLabel("X");
+        alghoritmsId.getItems().add(algName1);
+        alghoritmsId.getItems().add(algName2);
+        alghoritmsId.getItems().add(algName3);
     }
 
     public void onOpenFile(ActionEvent event) throws IOException {
@@ -289,6 +297,45 @@ public class Controller implements Initializable {
 
         generateOneListOfPointsFromTwoLists();
         drawChart(listOfPoints);
+    }
+
+    public void selectAlghoritm(ActionEvent actionEvent) {
+
+        String selectedAlghoritm = alghoritmsId.getValue().toString();
+        smothedPoints = new ArrayList<>();
+
+        switch (selectedAlghoritm){
+            case "ALG1" :
+                smothedPoints = smoothUsingFirstAlg();
+                break;
+            case "ALG2" :
+                smothedPoints = smoothUsingSecondtAlg();
+                break;
+            case "ALG3" :
+                smothedPoints = smoothUsingThirdAlg();
+                break;
+        }
+
+        if(smothedPoints != null)
+        drawChart(smothedPoints);
+    }
+
+    private List<Point> smoothUsingFirstAlg(){
+
+        System.out.println("pierwszy");
+        return null; // zwracana będzie nowa wygladzona lista punktów
+    }
+
+    private List<Point> smoothUsingSecondtAlg(){
+
+        System.out.println("drugi");
+        return null;
+    }
+
+    private List<Point> smoothUsingThirdAlg(){
+
+        System.out.println("trzeci");
+        return null;
     }
 }
 

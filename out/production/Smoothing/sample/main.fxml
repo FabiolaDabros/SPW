@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.chart.CategoryAxis?>
 <?import javafx.scene.chart.LineChart?>
 <?import javafx.scene.chart.NumberAxis?>
 <?import javafx.scene.control.Button?>
@@ -36,4 +35,5 @@
        </yAxis>
    </LineChart>
    <Button fx:id="submitButtonId" layoutX="298.0" layoutY="56.0" mnemonicParsing="false" onAction="#sumbit" text="Submit" />
+   <ComboBox fx:id="alghoritmsId" layoutX="415.0" layoutY="56.0" prefHeight="31.0" prefWidth="166.0" promptText="Select alghoritm" onAction="#selectAlghoritm" />
 </Pane>
