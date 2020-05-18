@@ -11,7 +11,7 @@
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.layout.Pane?>
 
-<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="657.0" prefWidth="1420.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Controller">
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="657.0" prefWidth="1420.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Controller">
     <MenuButton mnemonicParsing="false" prefHeight="25.0" prefWidth="64.0" text="File">
         <items>
             <MenuItem fx:id="openBtnId" mnemonicParsing="false" onAction="#onOpenFile" text="Load.." />
@@ -35,5 +35,5 @@
        </yAxis>
    </LineChart>
    <Button fx:id="submitButtonId" layoutX="298.0" layoutY="56.0" mnemonicParsing="false" onAction="#sumbit" text="Submit" />
-   <ComboBox fx:id="alghoritmsId" layoutX="414.0" layoutY="55.0" onAction="#selectAlghoritm" prefHeight="11.0" prefWidth="163.0" promptText="Select alghoritm" />
+   <ComboBox fx:id="alghoritmsId" layoutX="414.0" layoutY="55.0" onAction="#selectAlghoritm" prefHeight="25.0" prefWidth="247.0" promptText="Select alghoritm" />
 </Pane>

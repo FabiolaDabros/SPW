@@ -28,7 +28,8 @@ public class Controller implements Initializable {
 
     public TextArea fileTextid;
     public Label labelTitleId;
-    @FXML public TableView table;
+    @FXML
+    public TableView table;
     public ComboBox xCombo;
     public ComboBox yCombo;
     public Label xLabelId;
@@ -45,9 +46,9 @@ public class Controller implements Initializable {
     List<Double> yColumnDataTest;
     List<Point> listOfPoints;
     List<Point> smothedPoints;
-    String algName1 = "ALG1";  // tutaj do zmiany nazwy algorytmów jak juz bedziemy wiedziały dokladnie jakie
-    String algName2 = "ALG2";
-    String algName3 = "ALG2";
+    String algName1 = "Simple Moving Average";  // tutaj do zmiany nazwy algorytmów jak juz bedziemy wiedziały dokladnie jakie
+    String algName2 = "Triple Exponential Smoothing";
+    String algName3 = "Single Exponential Smoothing";
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -189,7 +190,7 @@ public class Controller implements Initializable {
         int column = tablePosition.getColumn();
         TableColumn tableColumn = tablePosition.getTableColumn();
         System.out.println("Selected column" + column);
-      }
+    }
 
     private void countNumberOfColumns() {
         ObservableList<TableColumn> columns = table.getColumns();
@@ -214,7 +215,7 @@ public class Controller implements Initializable {
         yLabelId.setVisible(true);
 
 
-        for(int i=0; i<numberOfColumns; i++){
+        for (int i = 0; i < numberOfColumns; i++) {
             xCombo.getItems().add(Column.values()[i]);
             yCombo.getItems().add(Column.values()[i]);
         }
@@ -224,8 +225,8 @@ public class Controller implements Initializable {
         int xColumnNumber = 0;
         Column xColumnString = (Column) xCombo.getValue();
 
-        for(Column col : Column.values()) {
-            if(xColumnString == col){
+        for (Column col : Column.values()) {
+            if (xColumnString == col) {
                 xColumnNumber = col.getValue();
             }
         }
@@ -239,11 +240,11 @@ public class Controller implements Initializable {
         }
 
         System.out.println("xColumnData" + xColumnData.size());
-        for(String x: xColumnData){
+        for (String x : xColumnData) {
             System.out.println(x);
         }
 
-        if(xColumnData.size()>0 && yColumnData.size()>0){
+        if (xColumnData.size() > 0 && yColumnData.size() > 0) {
             submitButtonId.setVisible(true);
         }
 
@@ -253,8 +254,8 @@ public class Controller implements Initializable {
         int yColumnNumber = 0;
         Column yColumnString = (Column) yCombo.getValue();
 
-        for(Column col : Column.values()) {
-            if(yColumnString == col){
+        for (Column col : Column.values()) {
+            if (yColumnString == col) {
                 yColumnNumber = col.getValue();
             }
         }
@@ -268,11 +269,11 @@ public class Controller implements Initializable {
         }
 
         System.out.println("yColumnData" + yColumnData.size());
-        for(String y: yColumnData){
+        for (String y : yColumnData) {
             System.out.println(y);
         }
 
-        if(xColumnData.size()>0 && yColumnData.size()>0){
+        if (xColumnData.size() > 0 && yColumnData.size() > 0) {
             submitButtonId.setVisible(true);
         }
     }
@@ -280,32 +281,32 @@ public class Controller implements Initializable {
     private void drawChart(List<Point> points) {
         XYChart.Series series = new XYChart.Series();
 
-        for (Point point: points ) {
+        for (Point point : points) {
 
-            series.getData().add(new XYChart.Data<>(point.getX(),point.getY()));
+            series.getData().add(new XYChart.Data<>(point.getX(), point.getY()));
         }
 
         lineChart.getData().addAll(series);
 
     }
 
-    private void generateOneListOfPointsFromTwoLists(){
+    private void generateOneListOfPointsFromTwoLists() {
 
-        listOfPoints =  new ArrayList<>();
-        xColumnDataTest =  new ArrayList<>();
-        yColumnDataTest =  new ArrayList<>();
-        listOfPoints =  new ArrayList<>();
-        if(xColumnData.size() > 0 && yColumnData.size() > 0)
-        for(int i= 0; i< xColumnData.size(); i++){
-            if(xColumnData.get(i) != null && yColumnData.get(i)!= null ){
+        listOfPoints = new ArrayList<>();
+        xColumnDataTest = new ArrayList<>();
+        yColumnDataTest = new ArrayList<>();
+        listOfPoints = new ArrayList<>();
+        if (xColumnData.size() > 0 && yColumnData.size() > 0)
+            for (int i = 0; i < xColumnData.size(); i++) {
+                if (xColumnData.get(i) != null && yColumnData.get(i) != null) {
 
-                Point point =  new Point(Double.parseDouble(xColumnData.get(i)), Double.parseDouble(yColumnData.get(i)));
-                listOfPoints.add(point);
-                xColumnDataTest.add(Double.parseDouble(xColumnData.get(i)));
-                yColumnDataTest.add(Double.parseDouble(yColumnData.get(i)));
+                    Point point = new Point(Double.parseDouble(xColumnData.get(i)), Double.parseDouble(yColumnData.get(i)));
+                    listOfPoints.add(point);
+                    xColumnDataTest.add(Double.parseDouble(xColumnData.get(i)));
+                    yColumnDataTest.add(Double.parseDouble(yColumnData.get(i)));
+                }
+
             }
-
-        }
 
     }
 
@@ -323,88 +324,78 @@ public class Controller implements Initializable {
         String selectedAlghoritm = alghoritmsId.getValue().toString();
         smothedPoints = new ArrayList<>();
 
-        switch (selectedAlghoritm){
-            case "ALG1" :
+        switch (selectedAlghoritm) {
+            case "Simple Moving Average":
                 smothedPoints = smoothUsingFirstAlg();
+                drawChart(smothedPoints);
                 break;
-            case "ALG2" :
+            case "Triple Exponential Smoothing":
                 smothedPoints = smoothUsingSecondtAlg();
+                drawChart(smothedPoints);
                 break;
-            case "ALG3" :
+            case "Single Exponential Smoothing":
                 smothedPoints = smoothUsingThirdAlg();
+                drawChart(smothedPoints);
                 break;
         }
 
-        if(smothedPoints != null)
-        drawChart(smothedPoints);
+        if (smothedPoints != null)
+            drawChart(smothedPoints);
     }
 
-    private List<Point> smoothUsingFirstAlg() throws IOException {
-        System.out.println("pierwszy");
-        String pathToData = "hotel.txt";
-        List<Double> file = readFile(pathToData);
-
-        // pierwszy test
-        file = xColumnDataTest;
+    private List<Point> smoothUsingFirstAlg() {
+        List<Double> file = xColumnDataTest;
         SimpleMovingAverage movingAverage = new SimpleMovingAverage(2);
-        System.out.println(movingAverage.getMA(file));
-
-        System.out.println("\n");
-
-        // drugi test
-        int[] windowSizes = {2};
-        for (int windSize : windowSizes) {
-            SimpleMovingAverage ma = new SimpleMovingAverage(windSize);
-            for (double x : xColumnDataTest) {
-                ma.newNum(x);
-                System.out.println("Next number = " + x + ", SMA = " + ma.getAvg());
-            }
+        List<Double> smoothed = movingAverage.getMA(file);
+        List<Point> listOfSmoothedPoints = new ArrayList<>();
+        for (int i = 0; i < smoothed.size(); i++) {
+            Point point = new Point(smoothed.get(i), yColumnDataTest.get(i));
+            listOfSmoothedPoints.add(point);
         }
 
-        return null; // zwracana będzie nowa wygladzona lista punktów
+        return listOfSmoothedPoints;
     }
 
-    public List<Double> readFile(String filepath) throws IOException {
-        FileReader fileReader = new FileReader(filepath);
-        BufferedReader bufferedReader = new BufferedReader(fileReader);
-        List<Double> data = new ArrayList<Double>();
-        String line;
-
-        while ((line = bufferedReader.readLine()) != null)
-        {
-            data.add(Double.parseDouble(line));
-        }
-
-        bufferedReader.close();
-        return data;
-    }
 
     private List<Point> smoothUsingSecondtAlg() throws IOException {
 
-        System.out.println("drugi");
         int period = 12;
         int m = 2;
-        double alpha =  0.5411;
-        double beta =  0.0086;
+        double alpha = 0.5411;
+        double beta = 0.0086;
         double gamma = 1e-04;
         boolean debug = true;
 
-        String pathToData = "hotel.txt";
-        List<Double> file = readFile(pathToData);
-        file = xColumnDataTest;
+        List<Double> file = xColumnDataTest;
 
         List<Double> prediction = TripleExpSmoothing.forecast(file, alpha, beta, gamma, period, m, debug);
-        System.out.println(prediction.size());
-        for(Double p: prediction){
-            System.out.println(p);
+        List<Point> listOfSmoothedPoints = new ArrayList<>();
+        for (int i = 0; i < yColumnDataTest.size(); i++) {
+            if (prediction.get(i) != 0.0) {
+                Point point = new Point(prediction.get(i), yColumnDataTest.get(i));
+                listOfSmoothedPoints.add(point);
+                System.out.println(prediction.get(i));
+            }
         }
-        return null;
+
+        return listOfSmoothedPoints;
     }
 
-    private List<Point> smoothUsingThirdAlg(){
+    private List<Point> smoothUsingThirdAlg() {
 
-        System.out.println("trzeci");
-        return null;
+        SingleExpSmoothing singleExpSmoothing = new SingleExpSmoothing();
+        List<Double> file = xColumnDataTest;
+        double[] fcast = singleExpSmoothing.singleExponentialForecast(file, .5, 2);
+        List<Point> listOfSmoothedPoints = new ArrayList<>();
+
+        for (int i = 0; i < yColumnDataTest.size(); i++) {
+            if (fcast[i] != 0.0) {
+                Point point = new Point(fcast[i], yColumnDataTest.get(i));
+                listOfSmoothedPoints.add(point);
+                System.out.println(fcast[i]);
+            }
+        }
+        return listOfSmoothedPoints;
     }
 }
 
