@@ -17,9 +17,7 @@ import com.gembox.spreadsheet.*;
 import org.shaded.etsi.uri.x01903.v13.SignatureProductionPlaceDocument;
 
 import java.awt.event.ItemEvent;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.io.*;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -43,6 +41,8 @@ public class Controller implements Initializable {
 
     List<String> xColumnData;
     List<String> yColumnData;
+    List<Double> xColumnDataTest;
+    List<Double> yColumnDataTest;
     List<Point> listOfPoints;
     List<Point> smothedPoints;
     String algName1 = "ALG1";  // tutaj do zmiany nazwy algorytmów jak juz bedziemy wiedziały dokladnie jakie
@@ -60,6 +60,9 @@ public class Controller implements Initializable {
         xLabelId.setVisible(false);
         yLabelId.setVisible(false);
         lineChart.setCreateSymbols(false);
+        submitButtonId.setVisible(false);
+        lineChart.setVisible(false);
+        alghoritmsId.setVisible(false);
         y.setLabel("Y");
         x.setLabel("X");
         alghoritmsId.getItems().add(algName1);
@@ -240,6 +243,10 @@ public class Controller implements Initializable {
             System.out.println(x);
         }
 
+        if(xColumnData.size()>0 && yColumnData.size()>0){
+            submitButtonId.setVisible(true);
+        }
+
     }
 
     public void ySelectedAction(ActionEvent actionEvent) {
@@ -264,6 +271,10 @@ public class Controller implements Initializable {
         for(String y: yColumnData){
             System.out.println(y);
         }
+
+        if(xColumnData.size()>0 && yColumnData.size()>0){
+            submitButtonId.setVisible(true);
+        }
     }
 
     private void drawChart(List<Point> points) {
@@ -281,12 +292,17 @@ public class Controller implements Initializable {
     private void generateOneListOfPointsFromTwoLists(){
 
         listOfPoints =  new ArrayList<>();
+        xColumnDataTest =  new ArrayList<>();
+        yColumnDataTest =  new ArrayList<>();
+        listOfPoints =  new ArrayList<>();
         if(xColumnData.size() > 0 && yColumnData.size() > 0)
         for(int i= 0; i< xColumnData.size(); i++){
             if(xColumnData.get(i) != null && yColumnData.get(i)!= null ){
 
                 Point point =  new Point(Double.parseDouble(xColumnData.get(i)), Double.parseDouble(yColumnData.get(i)));
                 listOfPoints.add(point);
+                xColumnDataTest.add(Double.parseDouble(xColumnData.get(i)));
+                yColumnDataTest.add(Double.parseDouble(yColumnData.get(i)));
             }
 
         }
@@ -295,11 +311,14 @@ public class Controller implements Initializable {
 
     public void sumbit(ActionEvent actionEvent) {
 
+        lineChart.setVisible(true);
+        alghoritmsId.setVisible(true);
+
         generateOneListOfPointsFromTwoLists();
         drawChart(listOfPoints);
     }
 
-    public void selectAlghoritm(ActionEvent actionEvent) {
+    public void selectAlghoritm(ActionEvent actionEvent) throws IOException {
 
         String selectedAlghoritm = alghoritmsId.getValue().toString();
         smothedPoints = new ArrayList<>();
@@ -320,15 +339,65 @@ public class Controller implements Initializable {
         drawChart(smothedPoints);
     }
 
-    private List<Point> smoothUsingFirstAlg(){
-
+    private List<Point> smoothUsingFirstAlg() throws IOException {
         System.out.println("pierwszy");
+        String pathToData = "hotel.txt";
+        List<Double> file = readFile(pathToData);
+
+        // pierwszy test
+        file = xColumnDataTest;
+        SimpleMovingAverage movingAverage = new SimpleMovingAverage(2);
+        System.out.println(movingAverage.getMA(file));
+
+        System.out.println("\n");
+
+        // drugi test
+        int[] windowSizes = {2};
+        for (int windSize : windowSizes) {
+            SimpleMovingAverage ma = new SimpleMovingAverage(windSize);
+            for (double x : xColumnDataTest) {
+                ma.newNum(x);
+                System.out.println("Next number = " + x + ", SMA = " + ma.getAvg());
+            }
+        }
+
         return null; // zwracana będzie nowa wygladzona lista punktów
     }
 
-    private List<Point> smoothUsingSecondtAlg(){
+    public List<Double> readFile(String filepath) throws IOException {
+        FileReader fileReader = new FileReader(filepath);
+        BufferedReader bufferedReader = new BufferedReader(fileReader);
+        List<Double> data = new ArrayList<Double>();
+        String line;
+
+        while ((line = bufferedReader.readLine()) != null)
+        {
+            data.add(Double.parseDouble(line));
+        }
+
+        bufferedReader.close();
+        return data;
+    }
+
+    private List<Point> smoothUsingSecondtAlg() throws IOException {
 
         System.out.println("drugi");
+        int period = 12;
+        int m = 2;
+        double alpha =  0.5411;
+        double beta =  0.0086;
+        double gamma = 1e-04;
+        boolean debug = true;
+
+        String pathToData = "hotel.txt";
+        List<Double> file = readFile(pathToData);
+        file = xColumnDataTest;
+
+        List<Double> prediction = TripleExpSmoothing.forecast(file, alpha, beta, gamma, period, m, debug);
+        System.out.println(prediction.size());
+        for(Double p: prediction){
+            System.out.println(p);
+        }
         return null;
     }
 

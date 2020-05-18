@@ -12,7 +12,7 @@ public class Main extends Application {
     public void start(Stage primaryStage) throws Exception{
         Parent root = FXMLLoader.load(getClass().getResource("main.fxml"));
         primaryStage.setTitle("Smoothing module");
-        Scene scene = new Scene(root, 1060, 670);
+        Scene scene = new Scene(root, 1160, 670);
         primaryStage.setScene(scene);
         scene.getStylesheets().add("sample/mainWindow.css");
         primaryStage.show();
