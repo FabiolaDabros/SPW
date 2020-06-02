@@ -11,16 +11,24 @@
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.layout.Pane?>
 
-<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="657.0" prefWidth="1420.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Controller">
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="657.0" prefWidth="1420.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Controller">
     <MenuButton mnemonicParsing="false" prefHeight="25.0" prefWidth="64.0" text="File">
         <items>
             <MenuItem fx:id="openBtnId" mnemonicParsing="false" onAction="#onOpenFile" text="Load.." />
-            <MenuItem fx:id="saveBtnId" mnemonicParsing="false" onAction="#onSaveFile" text="Save as.." />
+         <MenuItem fx:id="saveFirst" mnemonicParsing="false" onAction="#onSaveFirst" text="Save 1st algorithm" />
+            <MenuItem fx:id="saveBtnId" mnemonicParsing="false" onAction="#onSaveFile" text="Save 2nd algorithm" />
+         <MenuItem fx:id="saveThird" mnemonicParsing="false" onAction="#onSaveThird" text="Save 3rd alorithm" />
         </items>
     </MenuButton>
    <TextArea fx:id="fileTextid" layoutX="14.0" layoutY="96.0" prefHeight="554.0" prefWidth="259.0" />
    <Label fx:id="labelTitleId" layoutX="74.0" layoutY="6.0" prefHeight="17.0" prefWidth="182.0" />
     <TableView fx:id="table" editable="true" layoutX="14.0" layoutY="96.0" onMouseClicked="#clickedColumn" prefHeight="554.0" prefWidth="500.0">
+    </TableView>
+    <TableView fx:id="tableCopy1" editable="true" layoutX="14.0" layoutY="96.0" onMouseClicked="#clickedColumn" prefHeight="554.0" prefWidth="500.0">
+    </TableView>
+    <TableView fx:id="tableCopy2" editable="true" layoutX="14.0" layoutY="96.0" onMouseClicked="#clickedColumn" prefHeight="554.0" prefWidth="500.0">
+    </TableView>
+    <TableView fx:id="tableCopy3" editable="true" layoutX="14.0" layoutY="96.0" onMouseClicked="#clickedColumn" prefHeight="554.0" prefWidth="500.0">
     </TableView>
    <Label layoutX="32.0" layoutY="60.0" text="x:" fx:id="xLabelId" />
    <Label fx:id="yLabelId" layoutX="161.0" layoutY="60.0" text="y:" />

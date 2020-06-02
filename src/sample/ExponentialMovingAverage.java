@@ -1,5 +1,6 @@
 package sample;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ExponentialMovingAverage {
@@ -10,11 +11,12 @@ public class ExponentialMovingAverage {
         this.alpha = alpha;
     }
 
-    public List<Double> getEMA(List<Double> data){
+    public List<Double> getEMA(List<Double> data1){
         //List<Double> ema_data = new ArrayList<>(data.size());
 
-        for(int i=0;i<data.size();++i) {
-            data.set(i,average(data.get(i)));
+        List<Double> data = new ArrayList<>();
+        for(int i=0;i<data1.size();++i) {
+            data.set(i,average(data1.get(i)));
         }
         return data;
     }

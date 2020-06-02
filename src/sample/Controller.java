@@ -30,6 +30,9 @@ public class Controller implements Initializable {
     public Label labelTitleId;
     @FXML
     public TableView table;
+    public TableView tableCopy1;
+    public TableView tableCopy2;
+    public TableView tableCopy3;
     public ComboBox xCombo;
     public ComboBox yCombo;
     public Label xLabelId;
@@ -42,13 +45,20 @@ public class Controller implements Initializable {
 
     List<String> xColumnData;
     List<String> yColumnData;
-    List<Double> xColumnDataTest;
+    List<Double> xColumnDataTest1;
+    List<Double> xColumnDataTest2;
+    List<Double> xColumnDataTest3;
+    List<Double> xsmothed1 =  new ArrayList<>();
+    List<Double> xsmothed2 = new ArrayList<>();
+    List<Double> xsmothed3 = new ArrayList<>();
     List<Double> yColumnDataTest;
     List<Point> listOfPoints;
     List<Point> smothedPoints;
     String algName1 = "Simple Moving Average";  // tutaj do zmiany nazwy algorytmów jak juz bedziemy wiedziały dokladnie jakie
     String algName2 = "Triple Exponential Smoothing";
     String algName3 = "Single Exponential Smoothing";
+    ExcelWorksheet worksheet;
+    ObservableList<ObservableList<String>> data;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -56,6 +66,9 @@ public class Controller implements Initializable {
         labelTitleId.setVisible(false);
         fileTextid.setEditable(false);
         table.setVisible(false);
+        tableCopy1.setVisible(false);
+        tableCopy2.setVisible(false);
+        tableCopy3.setVisible(false);
         xCombo.setVisible(false);
         yCombo.setVisible(false);
         xLabelId.setVisible(false);
@@ -110,7 +123,7 @@ public class Controller implements Initializable {
 
     private void loadExcelFile(File file) throws IOException {
         ExcelFile workbook = ExcelFile.load(file.getAbsolutePath());
-        ExcelWorksheet worksheet = workbook.getWorksheet(0);
+         worksheet = workbook.getWorksheet(0);
         String[][] sourceData = new String[100][26];
         for (int row = 0; row < sourceData.length; row++) {
             for (int column = 0; column < sourceData[row].length; column++) {
@@ -125,10 +138,15 @@ public class Controller implements Initializable {
     }
 
     public void onSaveFile(ActionEvent actionEvent) throws IOException {
+
+        save(tableCopy2);
+    }
+
+    private void save(TableView table1) throws IOException {
         ExcelFile file = new ExcelFile();
         ExcelWorksheet worksheet = file.addWorksheet("sheet");
-        for (int row = 0; row < table.getItems().size(); row++) {
-            ObservableList cells = (ObservableList) table.getItems().get(row);
+        for (int row = 0; row < table1.getItems().size(); row++) {
+            ObservableList cells = (ObservableList) table1.getItems().get(row);
             for (int column = 0; column < cells.size(); column++) {
                 if (cells.get(column) != null)
                     worksheet.getCell(row, column).setValue(cells.get(column).toString());
@@ -143,8 +161,7 @@ public class Controller implements Initializable {
                 new FileChooser.ExtensionFilter("CSV files (*.csv)", "*.csv"),
                 new FileChooser.ExtensionFilter("HTML files (*.html)", "*.html")
         );
-        File saveFile = fileChooser.showSaveDialog(table.getScene().getWindow());
-
+        File saveFile = fileChooser.showSaveDialog(table1.getScene().getWindow());
         file.save(saveFile.getAbsolutePath());
     }
 
@@ -162,7 +179,7 @@ public class Controller implements Initializable {
         fileTextid.setVisible(false);
         table.setVisible(true);
 
-        ObservableList<ObservableList<String>> data = FXCollections.observableArrayList();
+         data = FXCollections.observableArrayList();
         for (String[] row : dataSource)
             data.add(FXCollections.observableArrayList(row));
         table.setItems(data);
@@ -293,7 +310,9 @@ public class Controller implements Initializable {
     private void generateOneListOfPointsFromTwoLists() {
 
         listOfPoints = new ArrayList<>();
-        xColumnDataTest = new ArrayList<>();
+        xColumnDataTest1 = new ArrayList<>();
+        xColumnDataTest2 = new ArrayList<>();
+        xColumnDataTest3 = new ArrayList<>();
         yColumnDataTest = new ArrayList<>();
         listOfPoints = new ArrayList<>();
         if (xColumnData.size() > 0 && yColumnData.size() > 0)
@@ -302,7 +321,9 @@ public class Controller implements Initializable {
 
                     Point point = new Point(Double.parseDouble(xColumnData.get(i)), Double.parseDouble(yColumnData.get(i)));
                     listOfPoints.add(point);
-                    xColumnDataTest.add(Double.parseDouble(xColumnData.get(i)));
+                    xColumnDataTest1.add(Double.parseDouble(xColumnData.get(i)));
+                    xColumnDataTest2.add(Double.parseDouble(xColumnData.get(i)));
+                    xColumnDataTest3.add(Double.parseDouble(xColumnData.get(i)));
                     yColumnDataTest.add(Double.parseDouble(yColumnData.get(i)));
                 }
 
@@ -330,7 +351,8 @@ public class Controller implements Initializable {
                 drawChart(smothedPoints);
                 break;
             case "Triple Exponential Smoothing":
-                smothedPoints = smoothUsingSecondtAlg();
+                //smothedPoints = smoothUsingSecondtAlg();
+                smothedPoints = cumutativeMovingAverage();
                 drawChart(smothedPoints);
                 break;
             case "Single Exponential Smoothing":
@@ -339,17 +361,24 @@ public class Controller implements Initializable {
                 break;
         }
 
-        if (smothedPoints != null)
-            drawChart(smothedPoints);
+        fillTableToSave();
+       // table.setItems(data);
+
     }
 
     private List<Point> smoothUsingFirstAlg() {
-        List<Double> file = xColumnDataTest;
+        List<Double> file = xColumnDataTest1;
+        for (double x : file
+             ) {
+            System.out.println("x " + x);
+
+        }
         SimpleMovingAverage movingAverage = new SimpleMovingAverage(2);
         List<Double> smoothed = movingAverage.getMA(file);
         List<Point> listOfSmoothedPoints = new ArrayList<>();
         for (int i = 0; i < smoothed.size(); i++) {
             Point point = new Point(smoothed.get(i), yColumnDataTest.get(i));
+            xsmothed1.add(smoothed.get(i));
             listOfSmoothedPoints.add(point);
         }
 
@@ -366,7 +395,7 @@ public class Controller implements Initializable {
         double gamma = 1e-04;
         boolean debug = true;
 
-        List<Double> file = xColumnDataTest;
+        List<Double> file = xColumnDataTest1;
 
         List<Double> prediction = TripleExpSmoothing.forecast(file, alpha, beta, gamma, period, m, debug);
         List<Point> listOfSmoothedPoints = new ArrayList<>();
@@ -384,18 +413,119 @@ public class Controller implements Initializable {
     private List<Point> smoothUsingThirdAlg() {
 
         SingleExpSmoothing singleExpSmoothing = new SingleExpSmoothing();
-        List<Double> file = xColumnDataTest;
+        List<Double> file = xColumnDataTest2;
         double[] fcast = singleExpSmoothing.singleExponentialForecast(file, .5, 2);
         List<Point> listOfSmoothedPoints = new ArrayList<>();
 
         for (int i = 0; i < yColumnDataTest.size(); i++) {
             if (fcast[i] != 0.0) {
                 Point point = new Point(fcast[i], yColumnDataTest.get(i));
+                xsmothed2.add(fcast[i]);
                 listOfSmoothedPoints.add(point);
                 System.out.println(fcast[i]);
             }
         }
         return listOfSmoothedPoints;
+    }
+
+    private List<Point> cumutativeMovingAverage(){
+        List<Double> file = xColumnDataTest3;
+        for (double x : file
+                ) {
+            System.out.println("x " + x);
+
+        }
+        CumulativeMovingAverage movingAverage = new CumulativeMovingAverage();
+        List<Double> smoothed = movingAverage.getCMA(file);
+        List<Point> listOfSmoothedPoints = new ArrayList<>();
+        for (int i = 0; i < smoothed.size(); i++) {
+            Point point = new Point(smoothed.get(i), yColumnDataTest.get(i));
+            xsmothed2.add(smoothed.get(i));
+            listOfSmoothedPoints.add(point);
+        }
+
+        return listOfSmoothedPoints;
+    }
+
+    private List<Point> exponentialMovingAverage(){
+        List<Double> file = xColumnDataTest1;
+        double alpha = 2/(file.size()) + 1 ;
+        ExponentialMovingAverage movingAverage = new ExponentialMovingAverage(alpha);
+        List<Double> smoothed = movingAverage.getEMA(file);
+        List<Point> listOfSmoothedPoints = new ArrayList<>();
+        for (int i = 0; i < smoothed.size(); i++) {
+            Point point = new Point(smoothed.get(i), yColumnDataTest.get(i));
+            listOfSmoothedPoints.add(point);
+        }
+
+        return listOfSmoothedPoints;
+    }
+
+    private void fillTableToSave(){
+
+        ObservableList<ObservableList<String>> data1 = FXCollections.observableArrayList();
+        ObservableList<ObservableList<String>> data2 = FXCollections.observableArrayList();
+        ObservableList<ObservableList<String>> data3 = FXCollections.observableArrayList();
+        ObservableList<String> dat1 = FXCollections.observableArrayList();
+        ObservableList<String> dat2 = FXCollections.observableArrayList();
+        ObservableList<String> dat3 = FXCollections.observableArrayList();
+        ObservableList<String> dat4 = FXCollections.observableArrayList();
+        TableView temp =  table;
+//        tableCopy1 = temp;
+//        tableCopy2 = temp;
+//        tableCopy3 = temp;
+
+        for (double a : xsmothed1){
+            dat1.add(String.valueOf(a));
+        }
+        for (double a : xsmothed2){
+            dat2.add(String.valueOf(a));
+        }
+        for (double a : xsmothed3){
+            dat3.add(String.valueOf(a));
+        }
+        for (double a : yColumnDataTest){
+            dat4.add(String.valueOf(a));
+        }
+
+        tableCopy1.getColumns().clear();
+        tableCopy2.getColumns().clear();
+        tableCopy3.getColumns().clear();
+
+        for(int i = 0; i< dat4.size(); i++){
+            ObservableList<String> temp1 = FXCollections.observableArrayList();
+            temp1.add(dat1.get(i));
+            temp1.add(dat4.get(i));
+            data1.add(temp1);
+        }
+
+        for(int i = 0; i< dat4.size(); i++){
+            ObservableList<String> temp1 = FXCollections.observableArrayList();
+            temp1.add(dat2.get(i));
+            temp1.add(dat4.get(i));
+            data2.add(temp1);
+        }
+
+        for(int i = 0; i< dat4.size(); i++){
+            ObservableList<String> temp1 = FXCollections.observableArrayList();
+            temp1.add(dat3.get(i));
+            temp1.add(dat4.get(i));
+            data3.add(temp1);
+        }
+
+        tableCopy1.setItems(data1);
+
+        tableCopy2.setItems(data2);
+        tableCopy3.setItems(data3);
+
+    }
+
+    public void onSaveFirst(ActionEvent actionEvent) throws IOException {
+        save(tableCopy1);
+    }
+
+    public void onSaveThird(ActionEvent actionEvent) throws IOException {
+        save(tableCopy3);
     }
 }
 

@@ -11,6 +11,7 @@ public class SimpleMovingAverage {
     private double sum;
 
     public List<Double> getMA(List<Double> data){
+
         List<Double> ma_data = new ArrayList<Double>(data.size());
         for (double x : data) {
             newNum(x);
