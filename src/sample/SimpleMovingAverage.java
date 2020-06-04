@@ -34,7 +34,7 @@ public class SimpleMovingAverage {
     }
 
     public double getAvg() {
-        if (window.isEmpty()) return 0; // technically the average is undefined
+        if (window.isEmpty()) return 0;
         return sum / window.size();
     }
 }
