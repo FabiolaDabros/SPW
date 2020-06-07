@@ -333,18 +333,20 @@ public class Controller implements Initializable {
             case "Simple Moving Average":
                 smothedPoints = smoothUsingFirstAlg();
                 drawChart(smothedPoints);
+                fillTableToSave1();
                 break;
             case "Cumulative Moving Average":
                 smothedPoints = smoothUsingSecondtAlg();
                 drawChart(smothedPoints);
+                fillTableToSave2();
                 break;
             case "Single Exponential Smoothing":
                 smothedPoints = smoothUsingThirdAlg();
                 drawChart(smothedPoints);
+                fillTableToSave3();
                 break;
         }
 
-        fillTableToSave();
     }
 
     private List<Point> smoothUsingFirstAlg() {
@@ -397,6 +399,39 @@ public class Controller implements Initializable {
     }
 
 
+        for(int i = 0; i< daty.size(); i++){
+            ObservableList<String> temp1 = FXCollections.observableArrayList();
+            temp1.add(dat.get(i));
+            temp1.add(daty.get(i));
+            data.add(temp1);
+        }
+
+        tableCopy.setItems(data);
+    }
+    private void fillTableToSave1(){
+
+        ObservableList<ObservableList<String>> data1 = FXCollections.observableArrayList();
+        ObservableList<String> dat1 = FXCollections.observableArrayList();
+        ObservableList<String> dat4 = FXCollections.observableArrayList();
+        fillTableToSave(data1, dat1, dat4,xsmothed1,tableCopy1 );
+
+    }
+    private void fillTableToSave2(){
+
+        ObservableList<ObservableList<String>> data2 = FXCollections.observableArrayList();
+        ObservableList<String> dat2 = FXCollections.observableArrayList();
+        ObservableList<String> dat4 = FXCollections.observableArrayList();
+        fillTableToSave(data2, dat2, dat4,xsmothed2,tableCopy2);
+
+    }
+    private void fillTableToSave3(){
+
+        ObservableList<ObservableList<String>> data3 = FXCollections.observableArrayList();
+        ObservableList<String> dat3 = FXCollections.observableArrayList();
+        ObservableList<String> dat4 = FXCollections.observableArrayList();
+        fillTableToSave(data3, dat3, dat4,xsmothed3,tableCopy3);
+
+    }
     private void fillTableToSave(){
 
         ObservableList<ObservableList<String>> data1 = FXCollections.observableArrayList();
@@ -433,17 +468,17 @@ public class Controller implements Initializable {
         }
 
         for(int i = 0; i< dat4.size(); i++){
-            ObservableList<String> temp1 = FXCollections.observableArrayList();
-            temp1.add(dat2.get(i));
-            temp1.add(dat4.get(i));
-            data2.add(temp1);
+            ObservableList<String> temp2 = FXCollections.observableArrayList();
+            temp2.add(dat2.get(i));
+            temp2.add(dat4.get(i));
+            data2.add(temp2);
         }
 
         for(int i = 0; i< dat4.size(); i++){
-            ObservableList<String> temp1 = FXCollections.observableArrayList();
-            temp1.add(dat3.get(i));
-            temp1.add(dat4.get(i));
-            data3.add(temp1);
+            ObservableList<String> temp3 = FXCollections.observableArrayList();
+            temp3.add(dat3.get(i));
+            temp3.add(dat4.get(i));
+            data3.add(temp3);
         }
 
         tableCopy1.setItems(data1);
